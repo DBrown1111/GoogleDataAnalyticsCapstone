@@ -1,0 +1,284 @@
+---
+title: "Bellabeat Capstone Project"
+author: "Donald Brown"
+date: "`r Sys.Date()`"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Case Study 2: How Can a Wellness Technology Company
+
+# Play It Smart?
+
+## About the company
+
+### Urška Sršen and Sando Mur founded Bellabeat, a high-tech company that manufactures health-focused smart products. Sršen used her background as an artist to develop beautifully designed technology that informs and inspires women around the world. Collecting data on activity, sleep, stress, and reproductive health has allowed Bellabeat to empower women withknowledge about their own health and habits. Since it was founded in 2013, Bellabeat has grown rapidly and quickly positioned itself as a tech-driven wellness company for women. By 2016, Bellabeat had opened offices around the world and launched multiple products. Bellabeat products became available through a growing number of online retailers in addition to their own e-commerce channel on their website. The company has invested in traditional advertising media, such as radio, out-of-home billboards, print, and television, but focuses on digital marketing extensively. Bellabeat invests year-round in Google Search, maintaining active Facebook and Instagram pages, and consistently engages consumers on Twitter. Additionally, Bellabeat runs video ads on Youtube and display ads on the Google Display Network to support campaigns around key marketing dates. Sršen knows that an analysis of Bellabeat's available consumer data would reveal more opportunities for growth. She has asked the marketing analytics team to focus on a Bellabeat product and analyze smart device usage data in order to gain insight into how people are already using their smart devices. Then, using this information, she would like high-level recommendations for how these trends can inform Bellabeat marketing strategy.
+
+## Ask
+
+### Sršen asks you to analyze smart device usage data in order to gain insight into how consumers use non-Bellabeat smart devices. She then wants you to select one Bellabeat product to apply these insights to in your presentation. These questions will guide your analysis:
+
+### 1. What are some trends in smart device usage?
+
+### 2. How could these trends apply to Bellabeat customers?
+
+### 3. How could these trends help influence Bellabeat marketing strategy?
+
+## You will produce a report with the following deliverables:
+
+### 1. A clear summary of the business task
+
+### 2. A description of all data sources used
+
+### 3. Documentation of any cleaning or manipulation of data
+
+### 4. A summary of your analysis
+
+### 5. Supporting visualizations and key findings
+
+### 6. Your top high-level content recommendations based on your analysis
+
+### I found a great article on the fitness tracker market at <https://www.fortunebusinessinsights.com/fitness-tracker-market-103358> The global fitness tracker market is projected to grow from \$36.34 billion in 2020 to \$114.36 billion in 2028 at a CAGR of 15.4% in forecast period 2021-2028... Read More at:- <https://www.fortunebusinessinsights.com/fitness-tracker-market-103358>
+
+### Here are two quotes that I found relevant to the potential success of Bellabeat.
+
+\_ "Growing awareness to stay healthy and fit to monitor fitness activities is anticipating the growth of the market. These tracking products have come a long way from being just a basic pedometer to becoming a smarter device with a colored display that tracks the sleep pattern, measures heart rate, activity monitor, and others. Being at their nascent stage in India, the fitness industry foresees a good amount of adoption, particularly amongst the younger generation. People are currently more inclined towards health clubs and gyms to limit the side-effects of a hectic lifestyle. Moreover, a regular workout helps in reducing stress, anxiety, and depression. The growing health issues are pushing people not only towards a healthy diet but also towards fitness activities. The fitness trackers help them track their exercises, thus, propelling the demand for fitness monitoring products."\_
+
+### Interestingly enough, in the same article came some insights on data privacy. Particularly relevant to Bellabeat's focus on women as their primary customers.
+
+### *"The data collected by fitness monitoring devices is mainly personal, entailing the user's information, which includes weight, birth date, photos, GPS coordinates, or social data, heart rate, steps, and background data used by the device. Besides the highly personal data, the primary concern is data theft. Thus, leaving the person open to privacy destructions that may cause them harm. Though, fitness tracker users are likely uninformed of the privacy implications of how the data could be misused when collected over time or when linked with other information. For Instance, in 2018, Strava on its website uploaded a heat map of users' unnamed and collective fitness tracking data."*
+
+### I would suggest Bellabeat take the time to invest in better data security for it's customers, and to market it appropriately. Peace of mind for it's customers cannot be understated.
+
+## Prepare
+
+### The data I used for this project came from the FitBit Fitness Tracker Data (CC0: Public Domain, data set made available through Mobius): This Kaggle data set contains personal fitness tracker from thirty fitbit users. Thirty eligible Fitbit users consented to the submission of personal tracker data, including minute-level output for physical activity, heart rate, and sleep monitoring. It includes information about daily activity, steps, and heart rate that can be used to explore users' habits.
+
+### The data was in a long format to begin with, and I decided to keep it that way. For this particular case, it would have made looking at the data sets a little harder to understand at a glance.
+
+### In order to feel confident in using this data, I first looked to see if it held any bias or credibility issues. For the Google Data Analytics course, we used the acronym ROCCC. Reliable, Original, Comprehensive, Current, and Cited.
+
+### The data is properly cited and verified. These two are critical for unbiased analysis. It is original. It isn't very current, but again, for this project it's fine. I don't expect the course to update these things regularly. We're learning how to clean data and offer analysis. For the scope of this project the data is comprehensive. You will see that we ended up with 34 unique Ids to study.
+
+## Process
+
+### I chose to use excel and R to process the data. I chose them because they are the tools I am most comfortable with. Also, I like the fact that I can do some data visualization in R and not have to move my data around. It isn't shown here in this study, but I fiddled around with the data in excel to get a feel for it. I've been using excel for years and am pretty comfortable with using it, and it's limitations. If I included all of this preliminary analysis this document would be too long and boring!
+
+### Below are the steps I took to look at the data, figure out my starting point, verify and clean as needed, and make some initial analysis as I figured out which data would be most useful to me.
+
+### Installing and loading the relevant packages:
+
+```{r}
+install.packages("tidyverse")
+library("tidyverse")
+library("readxl")
+library("lubridate")
+
+```
+
+### I had some trouble with R Studio on my computer and I had to set the working directory.
+
+```{r}
+setwd("/cloud/project/FitBit")
+```
+
+### Importing the useful data sets. After looking through all the data sets provided. I saw that ten of them were most useful for this analysis.
+
+```{r}
+
+Daily_Activity <- read_csv("FitBit/dailyActivity_merged.csv")
+Daily_Calories <- read_csv("FitBit/dailyCalories_merged.csv")
+Daily_Intensity <- read_csv("FitBit/dailyIntensities_merged.csv")
+Daily_Steps <- read_csv("FitBit/dailySteps_merged.csv")
+Heartrate <- read_csv("FitBit/heartrate_seconds_merged.csv")
+Hourly_Calories <- read_csv("FitBit/hourlyCalories_merged.csv")
+Hourly_Intensity <- read_csv("FitBit/hourlyIntensities_merged.csv")
+Hourly_Steps <- read_csv("FitBit/hourlySteps_merged.csv")
+Sleep <- read_csv("FitBit/sleepDay_merged.csv")
+Weight <- read_csv("FitBit/weightLogInfo_merged.csv")
+```
+
+### Now to check each data set for errors.
+
+```{r}
+head(Daily_Activity)
+head(Daily_Calories)
+head(Daily_Intensity)
+head(Daily_Steps)
+head(Heartrate)
+head(Hourly_Calories)
+head(Hourly_Intensity)
+head(Hourly_Steps)
+head(Sleep)
+head(Weight)
+```
+
+### They all look good.
+
+### I then looked at them and compared. I found that all the information from Daily_Calories, Daily_Intensity, and Daily_Steps, were all included in the Daily_Activitiy data set. To keep things neat, I removed them.
+
+```{r}
+rm(Daily_Calories, Daily_Intensity, Daily_Steps)
+```
+
+### Next, I wanted to look at how many unique ids there were in each data set.
+
+```{r}
+n_distinct(Daily_Activity$Id)
+n_distinct(Heartrate$Id)
+n_distinct(Hourly_Calories$Id)
+n_distinct(Hourly_Steps$Id)
+n_distinct(Sleep$Id)
+n_distinct(Weight$Id)
+n_distinct(Hourly_Intensity$Id)
+```
+
+### The data set containing information about weight has only 8 unique users. Not enough for any reliable statistical analysis. I removed this data set as well.
+
+```{r}
+rm(Weight)
+```
+
+### I wanted to make sure there were no duplicate Ids in the data sets, so I checked them. The Heartrate data set kept causing R to crash, so I had to remove it from this function. From my own work with Garmin, I do know that this data is indirectly recorded in all columns with an intensity component. The intensisty is based on heart rate. So this won't hinder any insights for this project.
+
+```{r}
+rm(Heartrate)
+sum(duplicated(Daily_Activity))
+sum(duplicated(Hourly_Calories))
+sum(duplicated(Hourly_Steps))
+sum(duplicated(Sleep))
+sum(duplicated(Hourly_Intensity))
+```
+
+### The Sleep data set has three duplicates. For the analysis, I'll remove them. Then I'll check it to see if any duplicates are returned.
+
+```{r}
+
+Sleep <- (unique(Sleep))
+sum(duplicated(Sleep))
+```
+
+### Now that all Ids are unique throughout the datasets I'll be using the next step is to clean the data. I will check the structure of the data.
+
+```{r}
+str(Daily_Activity)
+str(Hourly_Steps)
+str(Hourly_Calories)
+str(Hourly_Intensity)
+str(Sleep)
+```
+
+### All the colums that have a date and a time in them are in character format. I'll change them to date time formatting, and check the column names. This is a common thing to run into during data analysis. When entering the date, time, or both in a single frame, the formatting doesn't always conform to whatever software you're using for analysis.
+
+```{r}
+Daily_Activity <- Daily_Activity %>% 
+  rename(date= ActivityDate) %>%
+  mutate(date= as_date(date, format= "%m/%d/%Y"))
+
+Hourly_Calories <- Hourly_Calories %>%
+  rename(date_time= ActivityHour) %>%
+ mutate(date_time= as.POSIXct(date_time, format="%m/%d/%Y %I:%M:%S %p", tz= Sys.timezone()))
+
+Hourly_Intensity <- Hourly_Intensity %>%
+  rename(date_time= ActivityHour) %>%
+ mutate(date_time= as.POSIXct(date_time, format="%m/%d/%Y %I:%M:%S %p", tz= Sys.timezone()))
+
+Hourly_Steps <- Hourly_Steps %>%
+  rename(date_time= ActivityHour) %>%
+   mutate(date_time= as.POSIXct(date_time, format="%m/%d/%Y %I:%M:%S %p", tz= Sys.timezone()))
+
+Sleep <- Sleep %>%
+  rename(date= SleepDay) %>%
+  mutate(date= as_date(date, format= "%m/%d/%Y  %I:%M:%S %p", tz= Sys.timezone()))
+
+head(Daily_Activity)
+head(Hourly_Calories)
+head(Hourly_Intensity)
+head(Hourly_Steps)
+head(Sleep)
+```
+
+### Now I need to separate the date and the time in the data frames Hourly_Calories, Hourly_Steps, and Hourly_Intensity.
+
+```{r}
+
+separate(Hourly_Calories, col=date_time, into=c('date','time'), sep=' ')
+separate(Hourly_Steps, col=date_time, into=c('date','time'), sep=' ')
+separate(Hourly_Intensity, col=date_time, into=c('date','time'), sep=' ')
+
+```
+
+### I will need to separate date and time in the data frames Hourly_Calories, Hourly_Steps, and Hourly_Intensity.
+
+```{r}
+ Hourly_Calories <- separate(Hourly_Calories, date_time, into=c('date', 'time'), sep=" ")
+Hourly_Steps <- separate(Hourly_Steps, date_time, into=c('date', 'time'), sep=" ")
+Hourly_Intensity <- separate(Hourly_Intensity, date_time, into=c('date', 'time'), sep=" ")
+
+```
+
+### I'll merge these data frames to make analysis a bit easier. The Hourly_Metric I created gave me some trouble at first. I had to merge two data sets, and then merge in the last one. For some reason if you did it the other way, the time and date columns did not merge correctly. I had to go back and look at the data sets manually and check them. It took a couple of tries to get them to merge correctly. Daily_Metrics had no trouble at all.
+
+```{r}
+
+Daily_Metrics <- merge(Daily_Activity, Sleep, by= c("Id", "date"), all.x = TRUE)
+Hourly_Metrics <- merge(Hourly_Calories, Hourly_Steps, by= c("Id", "date", "time"), all.x = TRUE)
+Hourly_Metrics <- merge(Hourly_Metrics, Hourly_Intensity, by= c("Id", "date", "time"), all.x = TRUE)
+
+```
+
+## Analyze
+
+### Now let's look for some relationships within the data.
+
+```{r}
+ggplot(data=Daily_Metrics, mapping= aes(x=TotalSteps, y=Calories))+ geom_point()+ geom_smooth()
+```
+
+### As total steps go up, the amount of calories burned also goes up. No surprise there. It does help confirm the viability of the data. If I didn't see this sort of relationship I would be worried about the sourse of the data as well as it's reliability and comprehensivenss.
+
+### Let's look at Distance over Calories too.
+
+```{r}
+ggplot(data=Daily_Metrics, mapping= aes(x=TotalDistance, y=Calories))+ geom_point()+ geom_smooth()
+```
+
+### This is basically the same thing as the first graph, just substituting total distance for total steps. But again, this helps confirm the data. I do like the three points to the far right of the graph. From my own backround I can tell you a little about what I think aboout these three users. The very farthest right point is someone who gets in a lot of steps (obviously). They are in great shape, probably a runner. Why? Because as their total distance and steps goes up, their calories burned stays lower than the rest. As you get in better shape your body becomes more efficient and tends to burn less calories during litght to moderate excercise. This user gets in a lot of easy to light intensity minutes. The other two, for lack of a better explanation, go out and hammer it! Lots of steps/ distance at a high intensity. The difference is the overall calories burned. It's higher than the fist user I talked about.
+
+### Without getting into the weeds too much, lets look at these three metrics and see what we see.
+
+```{r}
+Daily_Metrics %>% 
+  select(TotalSteps, Calories, FairlyActiveMinutes, LightlyActiveMinutes, TotalMinutesAsleep) %>% 
+  drop_na() %>% 
+  summary()
+```
+
+### The mean amount of sleep is around 7 hours. Calories is just shy of 2400. Steps are 8515.
+
+### According to the CDC, 7 hours is right at the low end of their recommendations. According the American Heart Association, getting 150 minutes of moderate intensity aerobic activity is recommended, so the 216.5 is a good sign for these users.
+
+### Calories are tricky to analyze in this project because we can only see the approximate number of calories burned and have no data on calories taken in. With this in mind a suggestion for the team would be enabling the app so that a user could input their daily caloric intake, or at least the foods they ate. Remembering too that not all calories are created equal. What you eat is more important than how much you eat. I remind the people I coach is: Ounces are lost during the workout and pounds are lost in the kitchen.
+
+### The data trends we see in the Bellabeat data are in line with data sets from companies like Garmin and Fitbit, both companies cited in the article I refrenced at the start of this project.
+
+### I downloaded the Bellabeat App to get a better sence of what Bellabeat has to offer. They do offer many features that help promote a healthy life style. From menue planning, mediation and mindfulness strategies, exercise suggestions, and menstrual tacking and insights.
+
+### What I am most concerned about are the poor reviews the technology gets. From innacurate step counting, to glitches in the app and it's software. My biggest recommendation to the company would be to correct these things first. People won't mind paying for this brand if the products are reliable. Any other quest for gaining market share should be secondary to making the product more relaible.
+
+## About me
+
+### My name is Donald Brown. I am a gardener and a track and field coach. I have three kids, all college aged, and am looking to change careers. I have always been a bit of a data nerd, so when I saw the opportunity to take a cartificate program in data analytics, I took it.
+
+## If you've made it to the end of this long winded case study, then thank you! It's not the most conventional analysis I saw when I went looking for examples, but I stand by it. Perhaps my age and perspective as a runner gave me a different vantage point to view this product.
+
+### Again, thank you all for your time.
+
+### Best,
+
+### Don.
